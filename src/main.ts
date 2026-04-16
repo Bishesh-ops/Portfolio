@@ -128,6 +128,26 @@ function triggerUnlock() {
 
   }, 800);
 }
+(window as any).openModal = (projectTitle: string) => {
+  const modal = document.getElementById('os-modal')!;
+  const modalTitle = document.getElementById('modal-title')!;
+  const modalContent = document.getElementById('modal-content')!;
+
+  modalTitle.innerText = `~/projects/${projectTitle.toLocaleLowerCase().replace(/\s+/g, '_')}.exe`;
+  modalContent.innerHTML = `
+    <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Executing ${projectTitle}...</h3>
+    <p style="color: var(--text-secondary);">Booting container environment. Stand by.</p>
+  `;
+
+  modal.classList.add('modal-open');
+  document.body.style.overflow = 'hidden';
+};
+
+(window as any).closeModal = () => {
+  const modal = document.getElementById('os-modal')!;
+  modal.classList.remove('modal-open');
+  document.body.style.overflow = 'auto';
+};
 
 function renderPortfolio() {
   const heroContainer = document.getElementById('hero-container')!;
@@ -158,7 +178,7 @@ function renderPortfolio() {
     const techHtml = proj.tech?.map(t => `<span class="tech-pill">${t}</span>`).join('') || '';
 
     projContainer.innerHTML += `
-      <article class="project-card interactive-card" onclick="window.open('${proj.link}', '_blank')">
+      <article class="project-card interactive-card" onclick="openModal('${proj.title}')">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
           <h4 style="color: var(--accent-color); font-size: 1.2rem;">${proj.title}</h4>
           <span style="color: #666;">↗</span>
