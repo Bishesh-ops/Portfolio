@@ -156,8 +156,7 @@ function renderPortfolio() {
   const projContainer = document.getElementById('projects-container')!;
   resumeData.projects.forEach(proj => {
     const techHtml = proj.tech?.map(t => `<span class="tech-pill">${t}</span>`).join('') || '';
-    
-    // Notice the onclick event routing to your GitHub!
+
     projContainer.innerHTML += `
       <article class="project-card interactive-card" onclick="window.open('${proj.link}', '_blank')">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
