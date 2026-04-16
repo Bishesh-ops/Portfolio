@@ -1,8 +1,11 @@
 import './style.css';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis';
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import { resumeData } from './resume';
 
-
+gsap.registerPlugin(ScrollTrigger);
 const videoElement = document.getElementById('webcam') as HTMLVideoElement;
 const canvasElement = document.getElementById('output_canvas') as HTMLCanvasElement;
 const canvasCtx = canvasElement.getContext('2d')!;
@@ -201,3 +204,48 @@ function renderPortfolio() {
 }
 renderPortfolio();
 initializeAI();
+
+function initializeHighEndUI() {
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+  });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000)
+  });
+  gsap.fromTo('#hero-container > *',
+    { y: 50, opacity: 0, filter: 'blur(10px' },
+    { y: 0, opacity: 1, filter: 'blur(10px', duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 1 }
+  );
+
+  gsap.utils.toArray('.project-card').forEach((card: any, i) => {
+    gsap.fromTo(card,
+      {
+        y: 80,
+        opacity: 0,
+        scale: 0.95,
+        rotateX: 5
+      },
+      {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse'
+        },
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        rotationX: 0,
+        duration: 1,
+        ease: 'expo.out',
+        delay: i % 2 === 0 ? 0 : 0.1
+      }
+    );
+  });
+  
+}
+initializeHighEndUI()
