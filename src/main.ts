@@ -53,7 +53,7 @@ async function enableCam() {
           triggerUnlock();
         } else {
           input.value = '';
-          input.placeholder = "Wrong Passcode. Try 'password'";
+          input.placeholder = "Try 'password'";
         }
       }
     });
