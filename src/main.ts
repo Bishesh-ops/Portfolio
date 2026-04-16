@@ -127,6 +127,7 @@ function triggerUnlock() {
     
     setTimeout(() => {
       portfolio.classList.add('fade-in');
+      initializeHighEndUI()
     }, 50);
 
   }, 800);
@@ -219,7 +220,7 @@ function initializeHighEndUI() {
   });
   gsap.fromTo('#hero-container > *',
     { y: 50, opacity: 0, filter: 'blur(10px' },
-    { y: 0, opacity: 1, filter: 'blur(10px', duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 1 }
+    { y: 0, opacity: 1, filter: 'blur(10px', duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 0.2 }
   );
 
   gsap.utils.toArray('.project-card').forEach((card: any, i) => {
@@ -248,4 +249,4 @@ function initializeHighEndUI() {
   });
   
 }
-initializeHighEndUI()
+
