@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bish | Terminal</title>
+  </head>
+  <body>
+
+    <main id="gateway-screen">
+      <div class="header-container">
+        <h1>SYSTEM_LOCKED</h1>
+        <p>Awaiting biometric token. Throw up a ✌️ (Peace Sign) to authenticate.</p>
+      </div>
+
+      <div class="video-wrapper">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="output_canvas"></canvas>
+        <div id="terminal-fallback" class="hidden">
+          <p class="error-text">ERROR: Biometric hardware not detected.</p>
+          <p>Initiating manual override protocol...</p>
+          <div class="input-line">
+            <span class="prompt">guest@system:~$ </span>
+            <input type="text" id="override-input" autocomplete="off" spellcheck="false" autofocus placeholder="type 'sudo unlock'">
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <main id="portfolio-screen" class="hidden">
+      <header class="hero-section" id="hero-container">
+      </header>
+      <section class="projects-section">
+        <h3>// Professional Experience</h3>
+        <div id="experience-container" class="project-grid">
+        </div>
+      </section>
+      <section class="projects-section">
+        <h3>// Featured_Architecture</h3>
+        <div id="projects-container" class="project-grid">
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

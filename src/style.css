@@ -1,0 +1,144 @@
+:root {
+  --bgcolor: #0a0a0a;
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --accent-color: #00ffcc;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+  background: radial-gradient(circle at center, #111111 0%, var(--bgcolor) 100%);
+  color: var(--text-primary);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#terminal-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 10, 10, 0.95); /* Slightly transparent black */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.error-text {
+  color: #ff3333;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.input-line {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.prompt {
+  color: var(--accent-color);
+  margin-right: 0.5rem;
+}
+
+#override-input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none; /* Removes the ugly default browser focus ring */
+  flex-grow: 1;
+}
+
+/* Blinking cursor effect for the input */
+#override-input::placeholder {
+  color: #333;
+}
+
+#gateway-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-align: center;
+
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  opacity: 1;
+  transform: scale(1);
+}
+
+h1 {
+  font-size: 2.5rem;
+  letter-spacing: 4px;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 640px;
+  height: 480px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+}
+
+#webcam {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+#output_canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+#gateway-screen.fade-out {
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+}
+
+#portfolio-screen {
+  transition: opacity 1s ease, transform 1s ease;
+  opacity: 0;
+  transform: translateY(30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+}
+
+#portfolio-screen.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hidden {
+  display: none !important;
+}
