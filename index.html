@@ -40,6 +40,17 @@
         <div id="projects-container" class="project-grid">
         </div>
       </section>
+      <div id="os-modal" class="hidden">
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-window">
+          <div class="modal-header">
+            <span id="modal-title">~/system/process</span>
+            <button onclick="closeModal()" class="close-btn">[X]</button>
+          </div>
+          <div id="modal-content" class="modal-body">
+          </div>
+        </div>
+      </div>
     </main>
 
     <script type="module" src="/src/main.ts"></script>
