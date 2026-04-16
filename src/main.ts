@@ -49,11 +49,11 @@ async function enableCam() {
     
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        if (input.value.trim().toLowerCase() === 'sudo unlock') {
+        if (input.value.trim().toLowerCase() === 'password') {
           triggerUnlock();
         } else {
           input.value = '';
-          input.placeholder = "Command not found. Try 'sudo unlock'";
+          input.placeholder = "Wrong Passcode. Try 'password'";
         }
       }
     });
@@ -152,21 +152,27 @@ function triggerUnlock() {
 function renderPortfolio() {
   const heroContainer = document.getElementById('hero-container')!;
   heroContainer.innerHTML = `
-    <h1 class="accent" style="font-size: 3rem; margin-bottom: 0.5rem;">${resumeData.header.name}</h1>
-    <h2 style="color: var(--text-primary); font-size: 1.5rem; margin-bottom: 1rem;">${resumeData.header.title}</h2>
-    <p style="color: var(--text-secondary); max-width: 600px; line-height: 1.6;">${resumeData.header.tagline}</p>
-    <p style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">${resumeData.header.location}</p>
+    <h1 style="font-size: 3.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fff 0%, #a1a1a6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+      ${resumeData.header.name}
+    </h1>
+    <h2 style="color: var(--accent-color); font-size: 1.4rem; font-weight: 500; margin-bottom: 1.5rem;">${resumeData.header.title}</h2>
+    <p style="color: var(--text-secondary); max-width: 650px; line-height: 1.7; font-size: 1.1rem;">
+      I'm a recent CS grad (with a minor in AI) operating out of ${resumeData.header.location}. I love bridging the gap between heavy, complex backend systems and creative, interactive frontend experiences. 
+    </p>
   `;
 
   const expContainer = document.getElementById('experience-container')!;
+  document.querySelector('.projects-section h3')!.innerHTML = "Experience"; 
+  
   resumeData.experience.forEach(job => {
-    const bulletsHtml = job.bullets.map(b => `<li style="margin-bottom: 0.8rem; color: var(--text-secondary);">> ${b}</li>`).join('');
+    const bulletsHtml = job.bullets.map(b => `<li style="margin-bottom: 0.8rem; color: var(--text-secondary); margin-left: 1.2rem;">${b}</li>`).join('');
     
     expContainer.innerHTML += `
       <article class="project-card" style="grid-column: 1 / -1; cursor: default;">
-        <h4 style="color: var(--accent-color); font-size: 1.2rem;">${job.role} @ ${job.company}</h4>
-        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">${job.date}</p>
-        <ul style="list-style: none; padding-left: 0; line-height: 1.5;">
+        <h4 style="color: var(--text-primary); font-size: 1.3rem;">${job.role}</h4>
+        <p style="color: var(--accent-color); font-size: 1rem; margin-bottom: 0.2rem;">${job.company}</p>
+        <p style="color: #555; font-size: 0.9rem; margin-bottom: 1.5rem;">${job.date}</p>
+        <ul style="line-height: 1.6;">
           ${bulletsHtml}
         </ul>
       </article>
@@ -174,16 +180,18 @@ function renderPortfolio() {
   });
 
   const projContainer = document.getElementById('projects-container')!;
+  document.querySelectorAll('.projects-section h3')[1].innerHTML = "Selected Work";
+
   resumeData.projects.forEach(proj => {
     const techHtml = proj.tech?.map(t => `<span class="tech-pill">${t}</span>`).join('') || '';
 
     projContainer.innerHTML += `
       <article class="project-card interactive-card" onclick="openModal('${proj.title}')">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-          <h4 style="color: var(--accent-color); font-size: 1.2rem;">${proj.title}</h4>
-          <span style="color: #666;">↗</span>
+          <h4 style="color: var(--text-primary); font-size: 1.2rem;">${proj.title}</h4>
+          <span style="color: #555;">↗</span>
         </div>
-        <p style="color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem; flex-grow: 1;">${proj.description}</p>
+        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1;">${proj.description}</p>
         <div class="tech-stack">
           ${techHtml}
         </div>
