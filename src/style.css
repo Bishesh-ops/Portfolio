@@ -15,18 +15,17 @@
 body {
   background: radial-gradient(circle at center, #111111 0%, var(--bgcolor) 100%);
   color: var(--text-primary);
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-height: 100vh; 
 }
+
+
 #terminal-fallback {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(10, 10, 10, 0.95); /* Slightly transparent black */
+  background-color: rgba(10, 10, 10, 0.95);
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -57,22 +56,23 @@ body {
   color: var(--text-primary);
   font-family: inherit;
   font-size: 1rem;
-  outline: none; /* Removes the ugly default browser focus ring */
+  outline: none;
   flex-grow: 1;
 }
 
-/* Blinking cursor effect for the input */
 #override-input::placeholder {
   color: #333;
 }
 
+/* --- GATEWAY SCREEN --- */
 #gateway-screen {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   gap: 2rem;
   text-align: center;
-
+  min-height: 100vh; /* Takes up full screen */
   transition: opacity 0.8s ease, transform 0.8s ease;
   opacity: 1;
   transform: scale(1);
@@ -122,16 +122,18 @@ p {
   pointer-events: none;
 }
 
+/* --- PORTFOLIO LAYOUT --- */
 #portfolio-screen {
   transition: opacity 1s ease, transform 1s ease;
   opacity: 0;
   transform: translateY(30px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
+  
+  display: block; 
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  text-align: left;
 }
 
 #portfolio-screen.fade-in {
@@ -139,6 +141,75 @@ p {
   transform: translateY(0);
 }
 
+/* Sections */
+.hero-section, .projects-section {
+  margin-bottom: 4rem;
+}
+
+.projects-section h3 {
+  border-bottom: 1px solid #333;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
+/* The Grid System */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+
+.project-card {
+  background-color: #111;
+  border: 1px solid #222;
+  padding: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.interactive-card {
+  cursor: pointer;
+}
+
+.interactive-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-color);
+  box-shadow: 0 8px 20px rgba(0, 255, 204, 0.1);
+}
+
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-pill {
+  background-color: #222;
+  color: #ccc;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.social-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.social-link:hover {
+  color: var(--accent-color);
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
+
+/* Utilities */
 .hidden {
   display: none !important;
 }

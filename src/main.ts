@@ -132,33 +132,39 @@ function triggerUnlock() {
 function renderPortfolio() {
   const heroContainer = document.getElementById('hero-container')!;
   heroContainer.innerHTML = `
-    < h1 class="accent" > ${ resumeData.header.name } </h1>
-    <h2>${resumeData.header.title}</h2>
-    <p class="tagline">${resumeData.header.tagline}</p>
-    <p class="location" style="margin-top: 1rem; color: var(--text-secondary);">${resumeData.header.location}</p>
+    <h1 class="accent" style="font-size: 3rem; margin-bottom: 0.5rem;">${resumeData.header.name}</h1>
+    <h2 style="color: var(--text-primary); font-size: 1.5rem; margin-bottom: 1rem;">${resumeData.header.title}</h2>
+    <p style="color: var(--text-secondary); max-width: 600px; line-height: 1.6;">${resumeData.header.tagline}</p>
+    <p style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">${resumeData.header.location}</p>
   `;
+
   const expContainer = document.getElementById('experience-container')!;
   resumeData.experience.forEach(job => {
-    const bulletsHtml = job.bullets.map(b=>`<li style="margin-bottom: 0.5rem; color: #ccc;">> ${b}</li>`).join('');
+    const bulletsHtml = job.bullets.map(b => `<li style="margin-bottom: 0.8rem; color: var(--text-secondary);">> ${b}</li>`).join('');
     
     expContainer.innerHTML += `
-      <article class="project-card" style="grid-column: 1 / -1;">
-        <h4>${job.role} @ ${job.company}</h4>
-        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">${job.date}</p>
-        <ul style="list-style: none; padding-left: 0;">
+      <article class="project-card" style="grid-column: 1 / -1; cursor: default;">
+        <h4 style="color: var(--accent-color); font-size: 1.2rem;">${job.role} @ ${job.company}</h4>
+        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">${job.date}</p>
+        <ul style="list-style: none; padding-left: 0; line-height: 1.5;">
           ${bulletsHtml}
         </ul>
       </article>
-      `;
+    `;
   });
+
   const projContainer = document.getElementById('projects-container')!;
   resumeData.projects.forEach(proj => {
-    const techHtml = proj.tech?.map(t => `<span>${t}</span>`).join('') || '';
+    const techHtml = proj.tech?.map(t => `<span class="tech-pill">${t}</span>`).join('') || '';
     
+    // Notice the onclick event routing to your GitHub!
     projContainer.innerHTML += `
-      <article class="project-card">
-        <h4>${proj.title}</h4>
-        <p>${proj.description}</p>
+      <article class="project-card interactive-card" onclick="window.open('${proj.link}', '_blank')">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+          <h4 style="color: var(--accent-color); font-size: 1.2rem;">${proj.title}</h4>
+          <span style="color: #666;">↗</span>
+        </div>
+        <p style="color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem; flex-grow: 1;">${proj.description}</p>
         <div class="tech-stack">
           ${techHtml}
         </div>

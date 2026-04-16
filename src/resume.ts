@@ -22,13 +22,13 @@ export const resumeData = {
     title: "2D Falling Sand Engine",
     description: "A high-performance physics engine built in Go. Utilizes Ebitengine to handle granular thermodynamics and fluid simulations at a high frame rate.",
     tech: ["Go", "Ebitengine", "Physics Simulation"],
-    link: "https://github.com/Bishesh-ops/pixel-sim" // <-- Update with actual repo name
+    link: "https://github.com/Bishesh-ops/pixel-sim" 
   },
   {
     title: "Interactive Biometric Portfolio",
     description: "The site you are on right now. Used Google's MediaPipe Tasks API to build a client-side gesture authentication system.",
     tech: ["TypeScript", "MediaPipe", "Vite"],
-    link: "https://github.com/Bishesh-ops/portfolio" // <-- Update with actual repo name
+    link: "https://github.com/Bishesh-ops/Portfolio"
   },
   {
     title: "C-Compiler Visualization",
