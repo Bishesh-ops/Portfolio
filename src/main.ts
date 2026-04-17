@@ -14,6 +14,7 @@ let handLandmarker: HandLandmarker;
 let lastVideoTime = -1;
 let unlockFrames = 0;
 let isUnlocked = false;
+let lenis: any;
 
 async function initializeAI() {
   const vision = await FilesetResolver.forVisionTasks(
@@ -138,19 +139,39 @@ function triggerUnlock() {
   const modalContent = document.getElementById('modal-content')!;
 
   modalTitle.innerText = `~/projects/${projectTitle.toLocaleLowerCase().replace(/\s+/g, '_')}.exe`;
-  modalContent.innerHTML = `
-    <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Executing ${projectTitle}...</h3>
-    <p style="color: var(--text-secondary);">Booting container environment. Stand by.</p>
-  `;
+
+  if (projectTitle === "2D Falling Sand Engine") {
+    
+    modalContent.innerHTML = `
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+        <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Thermodynamic Simulation [WASM]</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Compiled from Go/Ebitengine.</p>
+        
+        <div style="background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          <canvas id="wasm-canvas" width="640" height="360" style="display: block; cursor: crosshair;"></canvas>
+        </div>
+      </div>
+    `;
+
+  } else {
+    modalContent.innerHTML = `
+      <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Executing ${projectTitle}...</h3>
+      <p style="color: var(--text-secondary);">Booting container environment. Stand by.</p>
+    `;
+  }
 
   modal.classList.add('modal-open');
   document.body.style.overflow = 'hidden';
+  
+  if (lenis) lenis.stop(); 
 };
 
 (window as any).closeModal = () => {
   const modal = document.getElementById('os-modal')!;
   modal.classList.remove('modal-open');
   document.body.style.overflow = 'auto';
+  
+  if (lenis) lenis.start(); 
 };
 
 function renderPortfolio() {
@@ -207,7 +228,7 @@ renderPortfolio();
 initializeAI();
 
 function initializeHighEndUI() {
-  const lenis = new Lenis({
+  lenis = new Lenis({
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     orientation: 'vertical',
@@ -219,8 +240,8 @@ function initializeHighEndUI() {
     lenis.raf(time * 1000)
   });
   gsap.fromTo('#hero-container > *',
-    { y: 50, opacity: 0, filter: 'blur(10px' },
-    { y: 0, opacity: 1, filter: 'blur(10px', duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 0.2 }
+    { y: 50, opacity: 0, filter: 'blur(10px)' },
+    { y: 0, opacity: 1, filter: 'blur(  0px)', duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 0.2 }
   );
 
   gsap.utils.toArray('.project-card').forEach((card: any, i) => {
