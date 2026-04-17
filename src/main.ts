@@ -141,18 +141,17 @@ function triggerUnlock() {
   modalTitle.innerText = `~/projects/${projectTitle.toLocaleLowerCase().replace(/\s+/g, '_')}.exe`;
 
   if (projectTitle === "2D Falling Sand Engine") {
-    
+    // Inject the iframe directly into the Switchboard
     modalContent.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
         <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Thermodynamic Simulation [WASM]</h3>
         <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Compiled from Go/Ebitengine.</p>
         
-        <div style="background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-          <canvas id="wasm-canvas" width="640" height="360" style="display: block; cursor: crosshair;"></canvas>
+        <div style="width: 640px; aspect-ratio: 4/3; background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5)">
+          <iframe src="/sim.html" style="width: 100%; height: 100%; border: none; outline: none;"></iframe>
         </div>
       </div>
     `;
-
   } else {
     modalContent.innerHTML = `
       <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Executing ${projectTitle}...</h3>
@@ -162,17 +161,27 @@ function triggerUnlock() {
 
   modal.classList.add('modal-open');
   document.body.style.overflow = 'hidden';
-  
   if (lenis) lenis.stop(); 
 };
 
 (window as any).closeModal = () => {
+  const modalContent = document.getElementById('modal-content')!;
   const modal = document.getElementById('os-modal')!;
+  
+  // Wiping the innerHTML destroys the iframe, cleanly killing the Wasm memory and process
+  modalContent.innerHTML = ''; 
+
   modal.classList.remove('modal-open');
   document.body.style.overflow = 'auto';
-  
   if (lenis) lenis.start(); 
 };
+
+// Listen for the Escape key from inside the iframe sandbox
+window.addEventListener('message', (event) => {
+  if (event.data === 'closeModal') {
+    (window as any).closeModal();
+  }
+});
 
 function renderPortfolio() {
   const heroContainer = document.getElementById('hero-container')!;
