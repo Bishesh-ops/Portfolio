@@ -34,13 +34,13 @@ export const resumeData = {
     title: "C-Compiler Visualization",
     description: "Built a custom C++17 compiler engine from scratch and wired it up to an interactive React dashboard to visualize the syntax trees in real-time.",
     tech: ["C++17", "React", "FastAPI"],
-    link: "https://github.com/Bishesh-ops/software-engineering-project" // <-- Update with actual repo name
+    link: "https://github.com/Bishesh-ops/software-engineering-project" 
   },
   {
     title: "Personal Finance Tracker",
     description: "A full-stack financial dashboard utilizing secure authentication and deployed via a containerized pipeline.",
     tech: ["Next.js", "PostgreSQL", "Docker"],
-    link: "https://github.com/Bishesh-ops/Finance-Tracking-App" // <-- Update with actual repo name
+    link: "https://github.com/Bishesh-ops/Finance-Tracking-App"
   }
 ]
 }

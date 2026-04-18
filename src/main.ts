@@ -4,8 +4,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import { resumeData } from './resume';
+import { compilerData } from './compilerMock';
 
 gsap.registerPlugin(ScrollTrigger);
+
 const videoElement = document.getElementById('webcam') as HTMLVideoElement;
 const canvasElement = document.getElementById('output_canvas') as HTMLCanvasElement;
 const canvasCtx = canvasElement.getContext('2d')!;
@@ -36,10 +38,9 @@ async function enableCam() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
     videoElement.srcObject = stream;
-
     videoElement.addEventListener("loadeddata", predictWebcam);
   } catch (error) {
-    console.warn("Camera access denied or unavailable. Triggering fallback.");
+    console.warn("Camera access denied or unavailable. Triggering terminal fallback.");
 
     videoElement.classList.add('hidden');
     canvasElement.classList.add('hidden');
@@ -47,7 +48,6 @@ async function enableCam() {
     const fallback = document.getElementById('terminal-fallback')!;
     fallback.classList.remove('hidden');
     
-
     const input = document.getElementById('override-input') as HTMLInputElement;
     input.focus();
     
@@ -70,7 +70,6 @@ async function predictWebcam() {
 
   if (videoElement.currentTime !== lastVideoTime) {
     lastVideoTime = videoElement.currentTime;
-
     const results = handLandmarker.detectForVideo(videoElement, performance.now());
 
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -90,7 +89,6 @@ async function predictWebcam() {
       const ringDown = landmarks[16].y > landmarks[14].y;
       const pinkyDown = landmarks[20].y > landmarks[18].y;
 
-      // FIX 1: Correctly placed else block
       if (indexUp && middleUp && ringDown && pinkyDown) {
         unlockFrames++;
         if (unlockFrames > 5) {
@@ -109,7 +107,6 @@ async function predictWebcam() {
 
 function triggerUnlock() {
   isUnlocked = true;
-  console.log("ACCESS GRANTED");
 
   if (videoElement.srcObject) {
     const stream = videoElement.srcObject as MediaStream;
@@ -123,7 +120,6 @@ function triggerUnlock() {
 
   setTimeout(() => {
     gateway.classList.add('hidden');
-    
     portfolio.classList.remove('hidden');
     
     setTimeout(() => {
@@ -133,6 +129,7 @@ function triggerUnlock() {
 
   }, 800);
 }
+
 (window as any).openModal = (projectTitle: string) => {
   const modal = document.getElementById('os-modal')!;
   const modalTitle = document.getElementById('modal-title')!;
@@ -141,17 +138,82 @@ function triggerUnlock() {
   modalTitle.innerText = `~/projects/${projectTitle.toLocaleLowerCase().replace(/\s+/g, '_')}.exe`;
 
   if (projectTitle === "2D Falling Sand Engine") {
-    // Inject the iframe directly into the Switchboard
     modalContent.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
         <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Thermodynamic Simulation [WASM]</h3>
         <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Compiled from Go/Ebitengine.</p>
-        
         <div style="width: 640px; aspect-ratio: 4/3; background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5)">
           <iframe src="/sim.html" style="width: 100%; height: 100%; border: none; outline: none;"></iframe>
         </div>
       </div>
     `;
+  } else if (projectTitle === "C-Compiler Visualization") {
+    modalContent.innerHTML = `
+      <div style="display: flex; flex-direction: column; height: 100%; width: 100%; max-width: 1000px; margin: 0 auto;">
+        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: flex-end; flex-shrink: 0;">
+          <div>
+            <h3 style="color: var(--text-primary); margin-bottom: 0.25rem;">C++17 Compiler Engine [Playback]</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Lexical Analysis → Parsing → CodeGen</p>
+          </div>
+          <div id="compiler-status" style="color: #f39c12; font-family: monospace; font-size: 0.9rem; opacity: 0;">Status: Awaiting Input...</div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; height: 60vh; min-height: 0;">
+          <div style="background: rgba(10, 10, 12, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;">
+            <div style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace; font-size: 0.8rem; color: #888; flex-shrink: 0;">input.c</div>
+            <div style="flex: 1; overflow: auto; min-height: 0; padding: 1rem;">
+              <pre style="margin: 0;"><code id="mock-editor" style="display: block; font-family: monospace; color: #d4d4d4; font-size: 0.85rem; white-space: pre;"></code></pre>
+            </div>
+          </div>
+
+          <div style="background: rgba(10, 10, 12, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;">
+            <div style="display: flex; background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;">
+              <button class="comp-tab active" data-target="ast" style="padding: 0.5rem 1rem; background: transparent; border: none; color: var(--accent-color); font-family: monospace; cursor: pointer; border-bottom: 2px solid var(--accent-color);">AST JSON</button>
+              <button class="comp-tab" data-target="asm" style="padding: 0.5rem 1rem; background: transparent; border: none; color: #888; font-family: monospace; cursor: pointer;">x86 Assembly</button>
+              <button class="comp-tab" data-target="hex" style="padding: 0.5rem 1rem; background: transparent; border: none; color: #888; font-family: monospace; cursor: pointer;">Hex Dump</button>
+            </div>
+            <div style="flex: 1; overflow: auto; min-height: 0; padding: 1rem;">
+              <pre style="margin: 0;"><code id="mock-output" style="display: block; font-family: monospace; color: #a6e22e; font-size: 0.85rem; white-space: pre; opacity: 0;"></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    runCompilerPlayback();
+  } else if (projectTitle === "Personal Finance Tracker") {
+    modalContent.innerHTML = `
+      <div style="display: flex; flex-direction: column; height: 100%; width: 100%; max-width: 900px; margin: 0 auto; background: rgba(10, 10, 12, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+        <div style="padding: 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);">
+          <div>
+            <h3 style="color: var(--text-primary); margin: 0 0 0.2rem 0; font-size: 1.4rem;">Financial Overview</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Containerized Full-Stack Demo</p>
+          </div>
+          <button id="mock-add-btn" style="background: var(--accent-color); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: 500; transition: transform 0.2s ease;">+ Add Transaction</button>
+        </div>
+        
+        <div style="padding: 2rem; overflow-y: auto; flex: 1;">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 10px;">
+              <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">Total Balance</p>
+              <h2 style="color: var(--text-primary); font-size: 2.2rem; margin: 0; font-variant-numeric: tabular-nums;">$<span id="mock-balance">0.00</span></h2>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 10px;">
+              <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">Monthly Income</p>
+              <h2 style="color: #2ecc71; font-size: 1.6rem; margin: 0; margin-top: 0.6rem; font-variant-numeric: tabular-nums;">+$<span id="mock-income">0.00</span></h2>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 10px;">
+              <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">Monthly Expenses</p>
+              <h2 style="color: #e74c3c; font-size: 1.6rem; margin: 0; margin-top: 0.6rem; font-variant-numeric: tabular-nums;">-$<span id="mock-expense">0.00</span></h2>
+            </div>
+          </div>
+
+          <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">Recent Transactions</h4>
+          <div id="mock-tx-list" style="display: flex; flex-direction: column; gap: 0.8rem;">
+            </div>
+        </div>
+      </div>
+    `;
+    runFinanceDashboardPlayback();
   } else {
     modalContent.innerHTML = `
       <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Executing ${projectTitle}...</h3>
@@ -168,7 +230,6 @@ function triggerUnlock() {
   const modalContent = document.getElementById('modal-content')!;
   const modal = document.getElementById('os-modal')!;
   
-  // Wiping the innerHTML destroys the iframe, cleanly killing the Wasm memory and process
   modalContent.innerHTML = ''; 
 
   modal.classList.remove('modal-open');
@@ -176,12 +237,136 @@ function triggerUnlock() {
   if (lenis) lenis.start(); 
 };
 
-// Listen for the Escape key from inside the iframe sandbox
 window.addEventListener('message', (event) => {
   if (event.data === 'closeModal') {
     (window as any).closeModal();
   }
 });
+
+function runCompilerPlayback() {
+  const editor = document.getElementById('mock-editor')!;
+  const output = document.getElementById('mock-output')!;
+  const status = document.getElementById('compiler-status')!;
+  const tabs = document.querySelectorAll('.comp-tab');
+
+  editor.innerHTML = '';
+  output.innerHTML = '';
+  gsap.set(output, { opacity: 0, y: 20 });
+  gsap.to(status, { opacity: 1, duration: 0.5 });
+
+  const codeChars = compilerData.code.split('');
+  let i = 0;
+  
+  const typeInterval = setInterval(() => {
+    if (i < codeChars.length) {
+      editor.innerHTML += codeChars[i];
+      i++;
+    } else {
+      clearInterval(typeInterval);
+      triggerCompilation();
+    }
+  }, 15);
+
+  function triggerCompilation() {
+    status.innerText = "Status: Compiling...";
+    status.style.color = "#e74c3c";
+
+    gsap.to(output.parentElement!, {
+      backgroundColor: "rgba(231, 76, 60, 0.1)",
+      duration: 0.2,
+      yoyo: true,
+      repeat: 3,
+      onComplete: () => {
+        status.innerText = "Status: Compilation Successful (0ms)";
+        status.style.color = "#2ecc71";
+        
+        output.innerHTML = compilerData.ast;
+        gsap.to(output, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" });
+      }
+    });
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      
+      tabs.forEach(t => {
+        (t as HTMLElement).style.color = '#888';
+        (t as HTMLElement).style.borderBottom = 'none';
+      });
+      
+      target.style.color = 'var(--accent-color)';
+      target.style.borderBottom = '2px solid var(--accent-color)';
+
+      gsap.to(output, {
+        opacity: 0,
+        duration: 0.15,
+        onComplete: () => {
+          const type = target.getAttribute('data-target');
+          if (type === 'ast') output.innerHTML = compilerData.ast;
+          if (type === 'asm') output.innerHTML = compilerData.assembly;
+          if (type === 'hex') output.innerHTML = compilerData.hex;
+          
+          gsap.to(output, { opacity: 1, duration: 0.2 });
+        }
+      });
+    });
+  });
+}
+
+function runFinanceDashboardPlayback() {
+  const balanceEl = document.getElementById('mock-balance');
+  const incomeEl = document.getElementById('mock-income');
+  const expenseEl = document.getElementById('mock-expense');
+  const txList = document.getElementById('mock-tx-list')!;
+  const addBtn = document.getElementById('mock-add-btn')!;
+
+  const txs = [
+    { name: "Apple Store", category: "Electronics", amount: "-$1,199.00", date: "Today", color: "#e74c3c" },
+    { name: "Salary Deposit", category: "Income", amount: "+$3,200.00", date: "Yesterday", color: "#2ecc71" },
+    { name: "Whole Foods Market", category: "Groceries", amount: "-$145.20", date: "Oct 12", color: "#e74c3c" },
+    { name: "Spotify Premium", category: "Subscriptions", amount: "-$10.99", date: "Oct 10", color: "#e74c3c" }
+  ];
+
+  txList.innerHTML = txs.map(tx => `
+    <div class="mock-tx-row" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; opacity: 0; transform: translateY(15px);">
+      <div>
+        <p style="color: var(--text-primary); font-weight: 500; margin: 0 0 0.3rem 0; font-size: 1rem;">${tx.name}</p>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;">${tx.category} • ${tx.date}</p>
+      </div>
+      <div style="color: ${tx.color}; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 1.1rem;">${tx.amount}</div>
+    </div>
+  `).join('');
+
+  const formatNumber = (num: number) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+  gsap.to(balanceEl, { innerHTML: 14250.81, duration: 2, ease: "power3.out", snap: { innerHTML: 0.01 }, onUpdate: function() { balanceEl!.innerHTML = formatNumber(Number(this.targets()[0].innerHTML)); } });
+  gsap.to(incomeEl, { innerHTML: 3200.00, duration: 1.5, ease: "power3.out", snap: { innerHTML: 0.01 }, onUpdate: function() { incomeEl!.innerHTML = formatNumber(Number(this.targets()[0].innerHTML)); } });
+  gsap.to(expenseEl, { innerHTML: 1355.19, duration: 1.5, ease: "power3.out", snap: { innerHTML: 0.01 }, onUpdate: function() { expenseEl!.innerHTML = formatNumber(Number(this.targets()[0].innerHTML)); } });
+
+  gsap.to('.mock-tx-row', { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "back.out(1.2)", delay: 0.3 });
+
+  addBtn.addEventListener('click', () => {
+    gsap.to(addBtn, { scale: 0.95, duration: 0.1, yoyo: true, repeat: 1 });
+
+    const newTx = document.createElement('div');
+    newTx.className = 'mock-tx-row';
+    newTx.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: rgba(46, 204, 113, 0.08); border: 1px solid rgba(46, 204, 113, 0.3); border-radius: 8px; opacity: 0; transform: translateY(-20px);';
+    newTx.innerHTML = `
+      <div>
+        <p style="color: var(--text-primary); font-weight: 500; margin: 0 0 0.3rem 0; font-size: 1rem;">Manual Entry</p>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;">Deposit • Just now</p>
+      </div>
+      <div style="color: #2ecc71; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 1.1rem;">+$500.00</div>
+    `;
+    txList.prepend(newTx);
+    
+    const currentBalance = parseFloat(balanceEl!.innerText.replace(/,/g, ''));
+    gsap.to(balanceEl, { innerHTML: currentBalance + 500, duration: 1, ease: "power2.out", snap: { innerHTML: 0.01 }, onUpdate: function() { balanceEl!.innerHTML = formatNumber(Number(this.targets()[0].innerHTML)); } });
+    
+    gsap.to(newTx, { opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.5)" });
+  });
+}
 
 function renderPortfolio() {
   const heroContainer = document.getElementById('hero-container')!;
@@ -233,6 +418,7 @@ function renderPortfolio() {
     `;
   });
 }
+
 renderPortfolio();
 initializeAI();
 
@@ -244,13 +430,15 @@ function initializeHighEndUI() {
     gestureOrientation: 'vertical',
     smoothWheel: true,
   });
+  
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => {
     lenis.raf(time * 1000)
   });
+  
   gsap.fromTo('#hero-container > *',
     { y: 50, opacity: 0, filter: 'blur(10px)' },
-    { y: 0, opacity: 1, filter: 'blur(  0px)', duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 0.2 }
+    { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 0.2 }
   );
 
   gsap.utils.toArray('.project-card').forEach((card: any, i) => {
@@ -277,6 +465,4 @@ function initializeHighEndUI() {
       }
     );
   });
-  
 }
-
