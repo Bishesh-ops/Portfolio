@@ -25,16 +25,16 @@ export const resumeData = {
     link: "https://github.com/Bishesh-ops/pixel-sim" 
   },
   {
-    title: "Interactive Biometric Portfolio",
-    description: "The site you are on right now. Used Google's MediaPipe Tasks API to build a client-side gesture authentication system.",
-    tech: ["TypeScript", "MediaPipe", "Vite"],
-    link: "https://github.com/Bishesh-ops/Portfolio"
+    title: "N-Body Gravity Simulation",
+    description: "A high-performance Barnes-Hut N-body simulation engine. Utilizes a custom Quadtree and OpenMP multi-threading to compute gravitational forces for massive particle counts.",
+    tech: ["C++17", "OpenMP", "SFML", "Barnes-Hut"],
+    link: "https://github.com/Bishesh-ops/nbody-sim"
   },
   {
     title: "C-Compiler Visualization",
-    description: "Built a custom C++17 compiler engine from scratch and wired it up to an interactive React dashboard to visualize the syntax trees in real-time.",
+    description: "Built a custom C++17 compiler engine from scratch and wired it up to an interactive dashboard to visualize the syntax trees in real-time.",
     tech: ["C++17", "React", "FastAPI"],
-    link: "https://github.com/Bishesh-ops/software-engineering-project" 
+    link: "https://github.com/Bishesh-ops/software-engineering-project"
   },
   {
     title: "Personal Finance Tracker",
@@ -42,5 +42,5 @@ export const resumeData = {
     tech: ["Next.js", "PostgreSQL", "Docker"],
     link: "https://github.com/Bishesh-ops/Finance-Tracking-App"
   }
-]
-}
+ ]
+};
