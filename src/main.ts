@@ -462,6 +462,23 @@ function renderPortfolio() {
       </article>
     `;
   });
+
+  const portfolioScreen = document.getElementById('portfolio-screen')!;
+  const footerElement = document.createElement('div');
+  footerElement.innerHTML = `
+    <div style="margin-top: 6rem; padding-top: 3rem; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; padding-bottom: 4rem;">
+      <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Let's Build Something.</h2>
+      <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 2rem auto; line-height: 1.6;">
+        I am currently seeking full-time roles as an Associate Software Engineer or Frontend Developer. My inbox is always open.
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="mailto:bisheshshr@gmail.com" style="background: var(--text-primary); color: var(--bg-dark); padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.2s ease;">Get In Touch</a>
+        <a href="https://github.com/Bishesh-ops" target="_blank" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 500; transition: background 0.2s ease;">GitHub</a>
+        <a href="/Bishesh_Shrestha_Resume.pdf" target="_blank" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 500; transition: background 0.2s ease;">📄 Download Resume</a>
+      </div>
+    </div>
+  `;
+  portfolioScreen.appendChild(footerElement);
 }
 
 renderPortfolio();
