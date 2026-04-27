@@ -3,8 +3,11 @@ export const resumeData = {
       name: "Bishesh Shrestha",
       title: "Software Developer",
       location: "Bharatpur, Nepal",
-      tagline: "Recent CS grad with a minor in AI. I like bridging complex backend logic with creative, interactive frontends."
+      tagline: "I built a C compiler from scratch, a Barnes-Hut gravity sim, a WASM physics engine, and a gesture-controlled portfolio. I love bridging heavy, complex backend systems with creative, interactive frontend experiences."
   },
+  skills: [
+    "C++17", "Python", "Javascript", "Java", "Azure", "Azure Data Factory", "Data Engineering" ,"Azure Functions", "Rust", "SQL", "Go", "TypeScript", "React", "Next.js", "PostgreSQL", "Docker", "OpenMP", "WebAssembly", "GSAP"
+  ],
   experience: [
   {
     role: "Software Development Intern",
@@ -18,6 +21,12 @@ export const resumeData = {
   }
   ],
  projects: [
+  {
+    title: "C++ ECS Roguelike",
+    description: "A systems-driven terminal roguelike utilizing a custom Entity Component System (ECS) and procedural dungeon generation.",
+    tech: ["C++17", "ECS Architecture", "ProcGen"],
+    link: "https://github.com/Bishesh-ops/entropy-descent" 
+  },
   {
     title: "2D Falling Sand Engine",
     description: "A high-performance physics engine built in Go. Utilizes Ebitengine to handle granular thermodynamics and fluid simulations at a high frame rate.",
