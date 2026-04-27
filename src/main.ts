@@ -88,22 +88,35 @@ async function predictWebcam() {
 
       if (indexUp && middleUp && ringDown && pinkyDown) {
         unlockFrames++;
-        if (unlockFrames > 5) triggerUnlock();
+
+        const progress = unlockFrames / 5;
+        canvasCtx.beginPath();
+        canvasCtx.arc(canvasElement.width / 2, 40, 20, -Math.PI / 2, -Math.PI / 2 + progress * 2 * Math.PI);
+        canvasCtx.strokeStyle = '#2997ff';
+        canvasCtx.lineWidth = 4;
+        canvasCtx.lineCap = 'round';
+        canvasCtx.stroke();
+
+        if (unlockFrames > 5) {
+          triggerUnlock();
+        }
       } else {
-        unlockFrames = 0;
+        unlockFrames = 0; 
       }
     }
   }
 
   if (!isUnlocked) window.requestAnimationFrame(predictWebcam);
 }
-
 function triggerUnlock() {
   isUnlocked = true;
 
   if (videoElement.srcObject) {
-    (videoElement.srcObject as MediaStream).getTracks().forEach(t => t.stop());
+    const stream = videoElement.srcObject as MediaStream;
+    stream.getTracks().forEach(track => track.stop());
   }
+
+  renderPortfolio();
 
   const gateway = document.getElementById('gateway-screen')!;
   const portfolio = document.getElementById('portfolio-screen')!;
@@ -113,27 +126,53 @@ function triggerUnlock() {
   setTimeout(() => {
     gateway.classList.add('hidden');
     portfolio.classList.remove('hidden');
+    
     setTimeout(() => {
       portfolio.classList.add('fade-in');
       initializeHighEndUI();
     }, 50);
+
   }, 800);
 }
 
 function renderPortfolio() {
   const heroContainer = document.getElementById('hero-container')!;
   heroContainer.innerHTML = `
-    <h1 style="font-size: 3.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fff 0%, #a1a1a6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-      ${resumeData.header.name}
-    </h1>
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+      <h1 style="font-size: 3.5rem; font-weight: 700; letter-spacing: -0.03em; margin: 0; background: linear-gradient(135deg, #fff 0%, #a1a1a6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        ${resumeData.header.name}
+      </h1>
+      <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.2); padding: 0.4rem 0.8rem; border-radius: 20px;">
+        <div style="width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; animation: pulse 2s infinite;"></div>
+        <span style="color: #2ecc71; font-size: 0.85rem; font-weight: 600;">Available for roles</span>
+      </div>
+    </div>
     <h2 style="color: var(--accent-color); font-size: 1.4rem; font-weight: 500; margin-bottom: 1.5rem;">${resumeData.header.title}</h2>
     <p style="color: var(--text-secondary); max-width: 650px; line-height: 1.7; font-size: 1.1rem;">
-      I'm a recent CS grad (with a minor in AI) operating out of ${resumeData.header.location}. I love bridging the gap between heavy, complex backend systems and creative, interactive frontend experiences.
+      ${resumeData.header.tagline}
     </p>
   `;
 
   const expContainer = document.getElementById('experience-container')!;
-  document.querySelector('.projects-section h3')!.textContent = 'Experience';
+
+  if ((resumeData as any).skills) {
+    const skillsHtml = (resumeData as any).skills.map((skill: string) => `<span class="tech-pill">${skill}</span>`).join('');
+    const skillsSection = document.createElement('section');
+    skillsSection.className = 'projects-section';
+    skillsSection.innerHTML = `
+      <h3> Core Stack</h3>
+      <div class="tech-stack" style="gap: 0.8rem; margin-bottom: 2rem;">
+        ${skillsHtml}
+      </div>
+    `;
+    expContainer.parentElement!.before(skillsSection);
+  }
+
+
+const expHeader = expContainer.previousElementSibling;
+  if (expHeader && expHeader.tagName === 'H3') {
+    expHeader.innerHTML = "Experience";
+  }
 
   resumeData.experience.forEach(job => {
     const bulletsHtml = job.bullets.map(b => `<li style="margin-bottom: 0.8rem; color: var(--text-secondary); margin-left: 1.2rem;">${b}</li>`).join('');
@@ -150,7 +189,10 @@ function renderPortfolio() {
   });
 
   const projContainer = document.getElementById('projects-container')!;
-  document.querySelectorAll('.projects-section h3')[1].textContent = 'Selected Work';
+  const projHeader = projContainer.previousElementSibling;
+    if (projHeader && projHeader.tagName === 'H3') {
+      projHeader.innerHTML = "Selected Work";
+    }
 
   resumeData.projects.forEach(proj => {
     const techHtml = proj.tech?.map(t => `<span class="tech-pill">${t}</span>`).join('') ?? '';
@@ -164,6 +206,7 @@ function renderPortfolio() {
       <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1;">${proj.description}</p>
       <div class="tech-stack">${techHtml}</div>
     `;
+    
     article.addEventListener('click', () => openModal(proj.title));
     projContainer.appendChild(article);
   });
@@ -179,7 +222,7 @@ function renderPortfolio() {
       <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
         <a href="mailto:bisheshshr@gmail.com" style="background: var(--text-primary); color: var(--bg-dark); padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.2s ease;">Get In Touch</a>
         <a href="https://github.com/Bishesh-ops" target="_blank" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 500; transition: background 0.2s ease;">GitHub</a>
-        <a href="/Bishesh_Shrestha_Resume.pdf" target="_blank" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 500; transition: background 0.2s ease;">📄 Download Resume</a>
+        <a href="/Bishesh_Shrestha_Resume.pdf" target="_blank" style="background: var(--accent-color); color: #fff; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(41, 151, 255, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease;">📄 Download Resume</a>
       </div>
     </div>
   `;
@@ -196,8 +239,17 @@ function initializeHighEndUI() {
   });
 
   setLenis(lenis);
-
   lenis.on('scroll', ScrollTrigger.update);
+  const cursor = document.getElementById('cursor');
+  if (cursor) {
+    let xTo = gsap.quickTo(cursor, "x", {duration: 0.1, ease: "power3"}),
+        yTo = gsap.quickTo(cursor, "y", {duration: 0.1, ease: "power3"});
+    
+    window.addEventListener("mousemove", e => {
+      xTo(e.clientX);
+      yTo(e.clientY);
+    });
+  }
   gsap.ticker.add((time) => { lenis.raf(time * 1000); });
   gsap.ticker.lagSmoothing(0);
 
@@ -218,6 +270,22 @@ function initializeHighEndUI() {
       }
     );
   });
+
+  const cards = document.querySelectorAll('.interactive-card');
+  cards.forEach((card) => {
+    const article = card as HTMLElement;
+    article.addEventListener('mousemove', (e) => {
+      const rect = article.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      article.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(10px)`;
+      article.style.transition = 'none'; // Instant response during mousemove
+    });
+    article.addEventListener('mouseleave', () => {
+      article.style.transform = '';
+      article.style.transition = 'transform 0.5s ease';
+    });
+  });
 }
 
 document.querySelector('.modal-backdrop')!.addEventListener('click', closeModal);
@@ -226,6 +294,35 @@ document.querySelector('.close-btn')!.addEventListener('click', closeModal);
 window.addEventListener('message', (e) => {
   if (e.data === 'closeModal') closeModal();
 });
+function addFilmGrain() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'noise-overlay';
+  canvas.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; opacity: 0.03;';
+  document.body.appendChild(canvas);
+  
+  const ctx = canvas.getContext('2d')!;
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+  window.addEventListener('resize', resize);
+  resize();
 
-renderPortfolio();
+  function drawNoise() {
+    const imageData = ctx.createImageData(canvas.width, canvas.height);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const value = Math.random() * 255;
+      data[i] = value;
+      data[i + 1] = value;
+      data[i + 2] = value;
+      data[i + 3] = 255;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    requestAnimationFrame(drawNoise);
+  }
+  drawNoise();
+}
+
 initializeAI();
+addFilmGrain();
