@@ -4,8 +4,7 @@ Hey! This is the repository for my interactive developer portfolio.
 
 I wanted to build something that actually reflects what I love doing: bridging the gap between heavy, complex backend systems and creative, highly interactive frontend experiences. Instead of just listing my projects, I tried to build the portfolio itself as a piece of engineering.
 
-![Portfolio Preview](./public/preview.gif) 
-*(Note: Drop a quick GIF here of the peace-sign unlock and the gravity mesh!)*
+![Portfolio Preview](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzNxd3NrcHZhb2h2bWpldGhjNWoybXBjYWpnanBoc2xtM2JyMTJ4ZiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/amrNGnZUeWhZC/giphy.gif) 
 
 ## What's actually going on here?
 
