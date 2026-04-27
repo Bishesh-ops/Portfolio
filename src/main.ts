@@ -324,5 +324,122 @@ function addFilmGrain() {
   drawNoise();
 }
 
+function initGravityMesh() {
+  const container = document.querySelector('.ambient-background')!;
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; mix-blend-mode: screen; opacity: 0.6;';
+  container.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d')!;
+  let width = 0, height = 0;
+  let particles: Particle[] = [];
+  
+  // Track mouse coordinates
+  let mouse = { x: -1000, y: -1000 };
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+    initParticles();
+  }
+
+  class Particle {
+    x: number; y: number; vx: number; vy: number; radius: number;
+    constructor() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+      this.radius = Math.random() * 1.5;
+    }
+
+    update() {
+      // Basic drift
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Wrap around edges seamlessly
+      if (this.x < 0) this.x = width;
+      if (this.x > width) this.x = 0;
+      if (this.y < 0) this.y = height;
+      if (this.y > height) this.y = 0;
+
+      // Gravity effect from mouse
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // If mouse is close, pull particles slightly
+      if (distance < 200) {
+        const force = (200 - distance) / 200;
+        this.vx += (dx / distance) * force * 0.02;
+        this.vy += (dy / distance) * force * 0.02;
+        
+        // Add some drag so they don't orbit infinitely fast
+        this.vx *= 0.98;
+        this.vy *= 0.98;
+      }
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(161, 161, 166, 0.8)'; // Apple-esque silver/grey
+      ctx.fill();
+    }
+  }
+
+  function initParticles() {
+    particles = [];
+    // Adjust particle count based on screen size for performance
+    const particleCount = Math.floor((width * height) / 12000); 
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+
+    // Update and draw all particles
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
+
+      // Draw constellation lines between close particles
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const distance = dx * dx + dy * dy;
+
+        if (distance < 12000) { // Approx 110px radius
+          const opacity = 1 - (distance / 12000);
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          // Tint lines slightly blue/purple to match your accent color
+          ctx.strokeStyle = `rgba(41, 151, 255, ${opacity * 0.15})`; 
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  animate();
+}
+
 initializeAI();
 addFilmGrain();
+initGravityMesh();
